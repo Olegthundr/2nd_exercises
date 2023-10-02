@@ -22,8 +22,8 @@ In [4]: r1.send_command('sh ip int br')
 Out[4]: 'Interface                  IP-Address      OK? Method Status                Protocol\nEthernet0/0                192.168.100.1   YES NVRAM  up                    up      \nEthernet0/1                192.168.200.1   YES NVRAM  up                    up      \nEthernet0/2                190.16.200.1    YES NVRAM  up                    up      \nEthernet0/3                192.168.230.1   YES NVRAM  up                    up      \nEthernet0/3.100            10.100.0.1      YES NVRAM  up                    up      \nEthernet0/3.200            10.200.0.1      YES NVRAM  up                    up      \nEthernet0/3.300            10.30.0.1       YES NVRAM  up                    up      '
 
 """
-from netmiko.cisco.cisco_ios import CiscoIosSSH
 
+from netmiko.cisco.cisco_ios import CiscoIosSSH
 
 device_params = {
     "device_type": "cisco_ios",
@@ -32,3 +32,14 @@ device_params = {
     "password": "cisco",
     "secret": "cisco",
 }
+
+
+class MyNetmiko(CiscoIosSSH):
+    def __init__(self, **device_params):
+        super().__init__(**device_params)
+        super().enable()
+
+
+if __name__ == '__main__':
+    r1 = MyNetmiko(**device_params)
+    print(r1.send_command('sh ip int br'))

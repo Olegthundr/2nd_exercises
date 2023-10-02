@@ -2,7 +2,8 @@ import sys
 
 import pytest
 from base_connect_class import BaseSSH
-from netmiko.ssh_exception import SSHException
+#from netmiko.ssh_exception import SSHException
+
 
 try:
     import task_24_1a
@@ -36,8 +37,8 @@ def test_params_without_password(first_router_from_devices_yaml, monkeypatch):
     password = first_router_from_devices_yaml.get("password")
     del params["password"]
     monkeypatch.setattr("builtins.input", lambda x=None: password)
-    try:
-        ssh = task_24_1a.CiscoSSH(**params)
-        ssh.ssh.disconnect()
-    except SSHException:
-        pytest.fail("Ошибка при подключении")
+    #try:
+    ssh = task_24_1a.CiscoSSH(**params)
+    ssh.ssh.disconnect()
+    #except SSHException:
+    #    pytest.fail("Ошибка при подключении")

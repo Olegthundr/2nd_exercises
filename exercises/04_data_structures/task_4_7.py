@@ -16,3 +16,6 @@
 """
 
 mac = "AAAA:BBBB:CCCC"
+values = mac.split(':')
+result = '{:b}{:b}{:b}'
+print(result.format(int(values[0].lower(),16),int(values[1].lower(),16),int(values[2].lower(),16)))

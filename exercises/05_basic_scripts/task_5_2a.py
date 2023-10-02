@@ -49,3 +49,18 @@ bin_ip = "00001010000000010000000111000011"
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+prefix = input('Введите префикс в формате network/mask: ')
+values = prefix.split('.')
+bin_ip = '{:08b}{:08b}{:08b}{:08b}'.format(int(values[0]), int(values[1]), int(values[2]), int(values[3].split('/')[0]))
+network = bin_ip[0:int(values[3].split('/')[1])] + "0" * (32 - int(values[3].split('/')[1]))
+network_template = """Network:
+{0:<10d} {1:<10d} {2:<10d} {3:<10d}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}"""
+mask = "1" * int(values[3].split('/')[1]) + "0" * (32 - int(values[3].split('/')[1]))
+mask_template = """Mask:
+/{4}
+{0:<10d} {1:<10d} {2:<10d} {3:<10d}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}"""
+
+print(network_template.format(int(network[0:8], 2), int(network[8:16], 2), int(network[16:24], 2), int(network[24:32], 2)))
+print(mask_template.format(int(mask[0:8], 2), int(mask[8:16], 2), int(mask[16:24], 2), int(mask[24:32], 2), int(values[3].split('/')[1])))

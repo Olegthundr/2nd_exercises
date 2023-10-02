@@ -24,3 +24,20 @@ interface Loopback0
 
 Проверить работу функции на примере файла config_r1.txt.
 """
+import re
+
+
+def get_ints_without_description(config_file):
+    with open(config_file) as config:
+        no_description = []
+        for line in config:
+            match_intf = re.search(r'^interface (?P<intf>\S+)$', line)
+            match_des = re.search(r'^ description ', line)
+            if match_intf:
+                no_description.append(match_intf.group('intf'))
+            elif match_des:
+                no_description.pop(-1)
+    return no_description
+
+if name == 'main':
+    print(get_ints_without_description('config_r1.txt'))

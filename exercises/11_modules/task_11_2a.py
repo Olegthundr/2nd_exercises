@@ -74,9 +74,36 @@
 
 """
 
+from task_11_2 import create_network_map
+from draw_network_graph import draw_topology
+
+input_value = {
+    ("R1", "Eth0/0"): ("SW1", "Eth0/1"),
+    ("R2", "Eth0/0"): ("SW1", "Eth0/2"),
+    ("R2", "Eth0/1"): ("SW2", "Eth0/11"),
+    ("R3", "Eth0/0"): ("SW1", "Eth0/3"),
+    ("R3", "Eth0/1"): ("R4", "Eth0/0"),
+    ("R3", "Eth0/2"): ("R5", "Eth0/0"),
+    ("SW1", "Eth0/1"): ("R1", "Eth0/0"),
+    ("SW1", "Eth0/2"): ("R2", "Eth0/0"),
+    ("SW1", "Eth0/3"): ("R3", "Eth0/0"),
+    ("SW1", "Eth0/5"): ("R6", "Eth0/1"),
+}
+
 infiles = [
     "sh_cdp_n_sw1.txt",
     "sh_cdp_n_r1.txt",
     "sh_cdp_n_r2.txt",
     "sh_cdp_n_r3.txt",
 ]
+def unique_network_map(topology_dict):
+    filtered_topology = {}
+    for key, value in topology_dict.items():
+        if  value not in filtered_topology.keys():
+            filtered_topology[key] = value
+    return filtered_topology
+
+
+if __name__ == '__main__':
+    topo_dict = unique_network_map(create_network_map(infiles))
+    draw_topology(topo_dict)

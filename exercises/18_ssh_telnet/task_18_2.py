@@ -46,3 +46,25 @@ R1#
 """
 
 commands = ["logging 10.255.255.1", "logging buffered 20010", "no logging console"]
+import yaml
+from netmiko import (ConnectHandler, NetMikoTimeoutException, NetMikoAuthenticationException)
+
+
+
+
+def send_config_commands(device, config_commands):
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            output = ssh.send_config_set(config_commands)
+        return output
+    except (NetMikoTimeoutException, NetMikoAuthenticationException) as error:
+        print(error)
+
+
+if __name__ == '__main__':
+    commands = ["interface Loopback 100", "ip address 10.1.1.100 255.255.255.255"]
+    with open('devices.yaml') as f:
+        devices = yaml.safe_load(f)
+    for device in devices:
+        print(send_config_commands(device, commands))

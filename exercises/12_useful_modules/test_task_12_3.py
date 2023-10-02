@@ -25,7 +25,6 @@ def test_function_stdout(capsys):
     reach_ip = ["10.10.1.7", "10.10.1.8", "10.10.1.9", "10.10.1.15"]
     unreach_ip = ["10.10.2.1", "10.10.1.2"]
     return_value = task_12_3.print_ip_table(reach_ip, unreach_ip)
-
     stdout, err = capsys.readouterr()
     correct_stdout = unified_columns_output(
         "Reachable    Unreachable\n"

@@ -63,3 +63,81 @@ ValueError                                Traceback (most recent call last)
 ValueError: При выполнении команды "logging 0255.255.1" на устройстве 192.168.100.1 возникла ошибка -> Invalid input detected at '^' marker.
 
 """
+import telnetlib
+import time
+from textfsm import clitable
+
+
+class CiscoTelnet:
+    def __init__(self, ip, username, password, secret):
+        self.ip = ip
+        self.telnet = telnetlib.Telnet(ip)
+        self.telnet.read_until(b'Username:')
+        self._write_line(username)
+        self.telnet.read_until(b'Password:')
+        self._write_line(password)
+        self.telnet.read_until(b'>')
+        #self._write_line('enable')
+        #self._write_line(secret)
+        #self.telnet.read_until(b'#')
+        #self._write_line('terminal length 0')
+        self._write_line('screen-length 0 temporary') # huawei
+        time.sleep(1)
+        self.telnet.read_very_eager()
+
+    def _write_line(self, line):
+        self.telnet.write(line.encode("utf-8") + b"\r\n")
+
+    def wrt_ln(self, line):
+        return self.telnet.write(line.encode("utf-8") + b"\r\n")
+
+    def send_show_command(self, show, parse=True, templates='templates', index='index'):
+        self._write_line(show)
+        output = self.telnet.read_until(b'#', timeout=3).decode('utf-8')
+        if parse:
+            cli_table = clitable.CliTable(index, templates)
+            result = cli_table.ParseCmd(output, {'Command': show})
+            return result
+        else:
+            return output
+
+    def send_config_commands(self, commands, strict=True):
+        output = self.send_show_command('system-view', parse=False)
+        error = 'При выполнении команды "{}" на устройстве {} возникла ошибка -> {}'
+        if type(commands) == list:
+            for command in commands:
+                out = self.send_show_command(command, parse=False)
+                if 'Error:' in out:
+                    if strict:
+                        raise ValueError(error.format(command, self.ip, out))
+                    else:
+                        print(error.format(command, self.ip, out))
+                else:
+                    output += out
+        elif type(commands) == str:
+            out = self.send_show_command(commands, parse=False)
+            if 'Error:' in out:
+                if strict:
+                    raise ValueError(error.format(commands, self.ip, out))
+                else:
+                    print(error.format(commands, self.ip, out))
+            else:
+                output += out
+        output += self.send_show_command('return', parse=False)
+
+        return output
+
+if __name__ == '__main__':
+    r1_params = {
+        'ip': '192.168.100.1',
+        'username': 'admin',
+        'password': 'admin',
+        'secret': 'admin'}
+    # 'username': 'cisco',
+    # 'password': 'cisco',
+    # 'secret': 'cisco'}
+    commands_with_errors = ['infoce 0255.255.1', 'info-center', 'a']
+    correct_commands = ['info-center loghost 10.10.10.10', 'ip route-static 172.19.40.0 24 10.20.30.40']
+    commands = commands_with_errors + correct_commands
+    sw1 = CiscoTelnet(**r1_params)
+    print(sw1.send_config_commands(commands))

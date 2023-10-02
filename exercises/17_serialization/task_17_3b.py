@@ -43,3 +43,20 @@
 > pip install graphviz
 
 """
+import yaml
+from draw_network_graph import draw_topology
+
+def transform_topology(topo):
+    with open(topo) as f:
+        topology = yaml.safe_load(f)
+        filtered_topo = {}
+        for host, bundle in topology.items():
+            for loc_intf, rem_host in bundle.items():
+                first_part = (host, loc_intf)
+                if not first_part in filtered_topo.values():
+                    filtered_topo[first_part] = list(rem_host.items())[0]
+    return filtered_topo
+
+
+if __name__ == '__main__':
+    draw_topology(transform_topology('topology.yaml'))

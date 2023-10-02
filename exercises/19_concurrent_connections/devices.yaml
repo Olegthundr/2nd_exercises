@@ -1,21 +1,21 @@
-- device_type: cisco_ios
+- device_type: huawei
   host: 192.168.100.1
-  username: cisco
-  password: cisco
-  secret: cisco
+  username: admin
+  password: super
+  secret: admin
   timeout: 10
   #fast_cli: true
-- device_type: cisco_ios
+- device_type: huawei
   host: 192.168.100.2
-  username: cisco
-  password: cisco
-  secret: cisco
+  username: admin
+  password: super
+  secret: admin
   timeout: 10
   #fast_cli: true
-- device_type: cisco_ios
+- device_type: huawei
   host: 192.168.100.3
-  username: cisco
-  password: cisco
-  secret: cisco
+  username: admin
+  password: super
+  secret: admin
   timeout: 10
   #fast_cli: true

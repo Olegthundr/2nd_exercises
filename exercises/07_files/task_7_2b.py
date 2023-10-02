@@ -16,4 +16,14 @@
 
 """
 
-ignore = ["duplex", "alias", "configuration"]
+
+ignore = ["duplex", "alias", "configuration", "!"]
+from sys import argv
+with open(argv[1]) as come_in, open(argv[2], 'a') as come_out:
+#with open('config_sw1.txt') as f:
+    for line in come_in:
+        for word in ignore:
+            if word in line:
+                break
+        else:
+            come_out.write(line)

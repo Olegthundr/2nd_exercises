@@ -44,3 +44,39 @@ ValueError: Возникла ошибка
 Тест проверяет подключение с параметрами из файла devices.yaml. Там должны быть
 указаны доступные устройства.
 """
+import telnetlib
+import time
+
+
+class CiscoTelnet:
+    def __init__(self, ip, username, password, secret):
+        self.telnet = telnetlib.Telnet(ip)
+        self.telnet.read_until(b'Username:')
+        self._write_line(username)
+        self.telnet.read_until(b'Password:')
+        self._write_line(password)
+        self.telnet.read_until(b'>')
+
+    def _write_line(self, line):
+        self.telnet.write(line.encode("utf-8") + b"\n")
+
+    def send_show_command(self, show):
+        self._write_line(show)
+        output = self.telnet.read_until(b'>', timeout=5).decode('utf-8')
+        return output
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.telnet.close()
+
+
+if __name__ == '__main__':
+    r1_params = {
+        'ip': '192.168.100.1',
+        'username': 'admin',
+        'password': 'admin',
+        'secret': 'admin'}
+    with CiscoTelnet(**r1_params) as sw1:
+        print(sw1.send_show_command('disp ip int br'))

@@ -40,3 +40,13 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+with open('CAM_table.txt') as cam_table:
+    result = []
+    for line in cam_table:
+        piece = line.split()
+        if len(piece) > 1 and piece[1][0] in '0123456789abcdef':
+            piece.pop(2)
+            piece[0] = int(piece[0])
+            result.append(piece)
+    for iteration in sorted(result):
+        print('{:<9}{:<20}{}'.format(iteration[0], iteration[1], iteration[2]))

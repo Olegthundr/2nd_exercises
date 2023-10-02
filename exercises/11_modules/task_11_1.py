@@ -43,7 +43,18 @@ def parse_cdp_neighbors(command_output):
     и с файлами и с выводом с оборудования.
     Плюс учимся работать с таким выводом.
     """
-
+    local_pair = []
+    remote_pair = []
+    for line in command_output.split('\n'):
+        if not line:
+            continue
+        elif '>' in line:
+            local_device = line.split('>')[0]
+        elif 'Eth' in line:
+            remote_device, local_intf_type, local_intf_number, *rest, remote_intf_type, remote_intf_number = line.split()
+            local_pair.append((local_device, local_intf_type + local_intf_number))
+            remote_pair.append((remote_device, remote_intf_type + remote_intf_number))
+    return dict(zip(local_pair, remote_pair))
 
 if __name__ == "__main__":
     with open("sh_cdp_n_sw1.txt") as f:

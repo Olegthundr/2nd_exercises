@@ -24,3 +24,21 @@
 а не ввод пользователя.
 
 """
+import re
+
+
+def get_ip_from_cfg(config_file):
+    with open(config_file) as config:
+        addresses_dict = {}
+        for line in config:
+            match_intf = re.search(r'interface (?P<intf>\S+$)', line)
+            match_ip = re.search(r'ip address (?P<ip_add>[\d.]+) (?P<mask>[\d.]+)', line)
+            if match_intf:
+                intf = match_intf.group('intf')
+            elif match_ip:
+                addresses_dict[intf] = match_ip.groups()
+    return addresses_dict
+
+
+if name == 'main':
+    print(get_ip_from_cfg('config_r2.txt'))

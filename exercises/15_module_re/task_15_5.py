@@ -26,3 +26,17 @@ description Connected to SW1 port Eth 0/1
 
 Проверить работу функции на файле sh_cdp_n_sw1.txt.
 """
+import re
+
+
+def generate_description_from_cdp(nei_output):
+    with open(nei_output) as file:
+        des_dict = {}
+        for line in file:
+            match = re.search(r'^(?P<nei_name>\S+)\s+(?P<local_intf>Eth \S+).+(?P<remote_intf>Eth \S+)$', line)
+            if match:
+                des_dict.update({match.group('local_intf'): f"description Connected to {match.group('nei_name')} port {match.group('remote_intf')}"})
+    return des_dict
+
+if __name__ == '__main__':
+    print(generate_description_from_cdp('sh_cdp_n_sw1.txt'))

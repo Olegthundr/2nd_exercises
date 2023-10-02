@@ -40,8 +40,9 @@ C-3PO,c3po@gmail.com,16/12/2019 17:24
 Функции convert_str_to_datetime и convert_datetime_to_str использовать не обязательно.
 
 """
-
+import csv
 import datetime
+from pprint import pprint
 
 
 def convert_str_to_datetime(datetime_str):
@@ -56,3 +57,29 @@ def convert_datetime_to_str(datetime_obj):
     Конвертирует строку с датой в формате 11/10/2019 14:05 в объект datetime.
     """
     return datetime.datetime.strftime(datetime_obj, "%d/%m/%Y %H:%M")
+
+def write_last_log_to_csv(source_log, output):
+    with open(source_log) as read_csv, open(output, 'w', newline='') as write_csv:
+        reader = csv.DictReader(read_csv)
+        reader_dict = [row for row in reader]
+        emails = {line['Email'] for line in reader_dict}
+        out_list = []
+        for email in emails:
+            last_change = None
+            for line in reader_dict:
+                if email == line['Email']:
+                    if not last_change:
+                        last_change = line['Last Changed']
+                        name = line['Name']
+                    elif convert_str_to_datetime(line['Last Changed']) > convert_str_to_datetime(last_change):
+                        last_change = line['Last Changed']
+                        name = line['Name']
+            out_list.append({'Name': name, 'Email': email, 'Last Changed': last_change})
+        writer = csv.DictWriter(write_csv, fieldnames=list(out_list[0].keys()), quoting=csv.QUOTE_NONNUMERIC)
+        writer.writeheader()
+        for row in out_list:
+            writer.writerow(row)
+    return
+
+if __name__ == '__main__':
+    write_last_log_to_csv('mail_log.csv', 'out.csv')

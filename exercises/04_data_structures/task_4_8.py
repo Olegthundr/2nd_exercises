@@ -26,3 +26,8 @@
 """
 
 ip = "192.168.3.1"
+values = ip.split('.')
+
+template = """{0:<10}{1:<10}{2:<10}{3:<10}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}"""
+print(template.format(int(values[0]),int(values[1]),int(values[2]),int(values[3])))

@@ -21,3 +21,20 @@
 Проверить работу функции на примере файла sh_ip_int_br.txt.
 
 """
+import re
+
+
+def parse_sh_ip_int_br(show_ip_int_br):
+    with open(show_ip_int_br) as interfaces:
+        output_sh_ip_int_br = []
+        for line in interfaces:
+            #FastEthernet0/0            15.0.15.1       YES manual up                    up
+            match = re.search(
+                r"(?P<intf>\S+)\s+(?P<ip>[\d.]+|\w+) +\S+ +\S+ +(?P<status>\w+ \w+|\w+) +(?P<protocol>\w+)", line)
+            if match:
+                output_sh_ip_int_br.append(match.groups())
+    return output_sh_ip_int_br
+
+if name == 'main':
+    print(parse_sh_ip_int_br('sh_ip_int_br.txt'))
+

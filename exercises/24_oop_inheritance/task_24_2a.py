@@ -34,9 +34,41 @@ ErrorInCommand: При выполнении команды "sh ip br" на ус�
 
 """
 
+from netmiko.cisco.cisco_ios import CiscoIosSSH
+import re
+
 
 class ErrorInCommand(Exception):
     """
     Исключение генерируется, если при выполнении команды на оборудовании,
     возникла ошибка.
     """
+
+
+device_params = {
+    "device_type": "huawei",
+    "ip": "192.168.100.1",
+    "username": "admin",
+    "password": "admin",
+    "secret": "admin",
+}
+
+
+class MyNetmiko(CiscoIosSSH):
+
+    def _check_error_in_command(self, command, output):
+        regexp = r'Error: (?P<error>.+)'
+        answer = 'При выполнении команды "{}" на устройстве {} возникла ошибка "{}"'
+        err = re.search(regexp, output)
+        if err:
+            raise ErrorInCommand(answer.format(command, self.host, err.group('error')))
+
+    def send_command(self, command, *args, **kwargs):
+        send = super().send_command(command, *args, **kwargs)
+        self._check_error_in_command(command, send)
+        return send
+
+
+if __name__ == '__main__':
+    r1 = MyNetmiko(**device_params)
+    print(r1.send_command('isp ip int br'))

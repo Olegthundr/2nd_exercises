@@ -14,6 +14,13 @@ class Topology:
     def __init__(self, topology_dict):
         self.topology = self._normalize(topology_dict)
 
+    def _normalize(self, topology_dict):
+        self.topologys = {}
+        for loc_intf, rem_intf in topology_dict.items():
+            if rem_intf not in self.topologys.keys():
+                self.topologys.update({loc_intf: rem_intf})
+        return self.topologys
+
 
 topology_example = {
     ("R1", "Eth0/0"): ("SW1", "Eth0/1"),
@@ -26,3 +33,6 @@ topology_example = {
     ("SW1", "Eth0/2"): ("R2", "Eth0/0"),
     ("SW1", "Eth0/3"): ("R3", "Eth0/0"),
 }
+if __name__ == '__main__':
+    top = Topology(topology_example)
+    print(top.topology)

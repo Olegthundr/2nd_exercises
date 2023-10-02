@@ -20,3 +20,8 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+with open('CAM_table.txt') as cam_table:
+    for line in cam_table:
+        piece = line.split()
+        if len(piece) > 1 and piece[1][0] in '0123456789abcdef':
+            print('{:<9}{:<20}{}'.format(piece[0], piece[1], piece[3]))

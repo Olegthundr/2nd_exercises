@@ -17,3 +17,18 @@ Enter VLAN number: 10
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+vlan_input = int(input('Enter VLAN number: '))
+with open('CAM_table.txt') as cam_table:
+    result = []
+    for line in cam_table:
+        piece = line.split()
+        if len(piece) > 1 and piece[1][0] in '0123456789abcdef':
+            piece.pop(2)
+            piece[0] = int(piece[0])
+            result.append(piece)
+    for iteration in sorted(result):
+        if vlan_input == iteration[0]:
+            vlan = iteration[0]
+            mac = iteration[1]
+            interface = iteration[2]
+            print('{:<9}{:<20}{}'.format(vlan, mac, interface))

@@ -30,3 +30,16 @@ Out[1]: '11111111111111111111111111110000'
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+prefix = input('Введите префикс в формате network/mask: ')
+values = prefix.split('.')
+network_template = """Network:
+{0:<10}{1:<10}{2:<10}{3:<10}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}"""
+mask = "1" * int(values[3].split('/')[1]) + "0" * (32 - int(values[3].split('/')[1]))
+mask_template = """Mask:
+/{4}
+{0:<10d} {1:<10d} {2:<10d} {3:<10d}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}"""
+
+print(network_template.format(int(values[0]), int(values[1]), int(values[2]), int(values[3].split('/')[0])))
+print(mask_template.format(int(mask[0:8], 2), int(mask[8:16], 2), int(mask[16:24], 2), int(mask[24:32], 2), int(values[3].split('/')[1])))
